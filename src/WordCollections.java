@@ -20,9 +20,9 @@ public class WordCollections
         scanner = new Scanner(System.in);
     }
 
-    public ArrayList<String> getDictionary()
+    public ArrayList<String> getRandomWord()
     {
-        return  dictionary; // write a method to put out a random five letter word
+        return null; // write a method to put out a random five letter word inside dictionary ArrayList.
     }
 
     private void importDictionary(String fileName)
