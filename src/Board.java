@@ -5,15 +5,15 @@ public class Board
     public Board()
     {
         grid = new String[5][5];
+        clearGrid();
     }
 
 
-
-    public void setGrid(String[] array, String color, int row)
+    public void setGrid(String[] array, int row)
     {
-            for(int i = 0; i < grid[i].length; i++)
+            for(int i = 0; i < grid[row].length; i++)
             {
-                grid[row][i] = color + array[i];
+                grid[row][i] = array[i];
             }
     }
 
@@ -38,7 +38,7 @@ public class Board
             for(String element : row)
             {
                 System.out.print(element);
-                if(commas < 5)
+                if(commas < 4)
                 {
                     System.out.print(", ");
                     commas++;

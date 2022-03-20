@@ -1,38 +1,42 @@
 import java.util.Scanner;
+import java.util.Arrays;
 public class wordle
 {
     private static final String GREEN = "\u001B[32m";
-    private static final String BLACK = "\u001B[30m";
-    private static final String YELLOW = "\\u001B[33m\t";
+    private static final String RED = "\u001B[31m";
+    private static final String YELLOW = "\u001B[33m";
+    public static final String RESET = "\u001B[0m";
     private WordCollections dictionary;
-    private String guessingWord;
     private Board grid;
     private Scanner scanner;
+    private String[] guessingWordArray;
+    private String guessingWord;
+    private String correctWord;
     private String choice;
+    private int scores;
 
     public wordle()
     {
         scanner = new Scanner(System.in);
-        dictionary = new WordCollections("word.txt");
+        dictionary = new WordCollections("src\\word.txt");
         grid = new Board();
         choice = "";
+        scores = 0;
         guessingWord = "";
+        correctWord = "";
+        guessingWordArray = new String[5];
         start();
     }
 
     public void start()
     {
-        System.out.println("Welcome to WORDLE, enjoy yourself in the world of wordes.");
-        // introduct the player, tell them how to play(TO guess), they can click rules if they want to ..
+        System.out.println("Welcome to WORDLE, enjoy yourself in the world of words.");
         mainMenu();
     }
 
 
     public void mainMenu()
     {
-
-        clear();
-
         while (! (choice.equals("Q") || choice.equals("q")))
         {
             System.out.println("-- GAME MENU --");
@@ -51,121 +55,130 @@ public class wordle
         choice = choice.toLowerCase();
         if(choice.equals("p"))  // play
         {
-
+            play();
         }
         else if(choice.equals("r"))  // rules
         {
-
+            rules();
         }
         else if(choice.equals("s"))  // scores
         {
-
+            scores();
         }
         else if(choice.equals("q"))  // quit
         {
-
+            System.out.println("You have a great day! GoodBye!");
         }
         else
         {
             System.out.println("Yikes! That's an invalid option! Try again.");
         }
+        System.out.println("\n");
+        waitNow();
     }
 
     private void play()
     {
+        int trial = 0;
+        boolean isGuessing = true;
+        int result = 0;
+        String[] answer = dictionary.getRandomWord();
+        for(int i = 0; i < answer.length; i++)
+        {
+            correctWord += answer[i];
+        }
 
+        while(trial < 5 && isGuessing)
+        {
+            boolean badLetter = true;
+            while(badLetter)  // loop them if they insert symbols or not exact 5-letter word.
+            {
+                grid.printGrid();
+                System.out.print("Enter your guess : ");
+                guessingWord = scanner.nextLine();
+                if(guessingWord.length() == 5 && guessingWord.matches("[a-zA-Z]+"))
+                {
+                    badLetter = false;
+                }
+                else if (guessingWord.length() != 5)
+                {
+                    System.out.println("Five Letter word only!");
+                }
+                else
+                {
+                    System.out.println("No Numbers or Symbol");
+                }
+            }
+            fillIntoArray(guessingWord);
+            result = check(answer);
+            grid.setGrid(guessingWordArray, trial);
+            trial++;
+            grid.printGrid();
+            if(result == 5)
+            {
+                System.out.println("You got it right!");
+                isGuessing = false;
+            }
+            else
+            {
+                if(trial == 4)
+                {
+                    System.out.println("Correct Answer: " + correctWord );
+                }
+                else
+                {
+                    System.out.println("Nice Try");
+                }
+            }
+        }
+        // set the grid and correctAnswer back to default
+        grid.clearGrid();
+        correctWord = "";
     }
 
-    private void rules()
+    // stuff the user's guess into the guessingWordArray
+    private void fillIntoArray(String guess)
     {
-
+        for(int i = 0; i < guessingWordArray.length; i++)
+        {
+            guessingWordArray[i] = guess.substring(i, i+1);
+        }
     }
-    private void scores()
-    {
-
-    }
-
-
-
 
     // Two methods used in play() to set the board after user enter an input
-    public int check(int index)
+    public int check(String[] original)
     {
         int result = 0;
-
-        return result;   // used in the nested for loop
+        for(int i = 0; i < guessingWordArray.length; i++)
+        {
+            if (correctWord.contains(guessingWordArray[i]) && original[i].equals(guessingWordArray[i]))  // right letter, right position
+            {
+                guessingWordArray[i] = GREEN + guessingWordArray[i] + RESET;
+                result++;
+            }
+            else if (correctWord.contains(guessingWordArray[i]) && !original[i].equals(guessingWordArray[i])) // right letter, wrong position
+            {
+                guessingWordArray[i] = YELLOW + guessingWordArray[i] + RESET;
+            }
+            else   // wrong letter, wrong position
+            {
+                guessingWordArray[i] = RED + guessingWordArray[i] + RESET;
+            }
+        }
+        return result;  // if return 5, meaning the user guessed every single letter correctly!
     }
-    private String color(int result)
+    private void rules()
     {
-        if(result == 1) // wrong letter, wrong position
-        {
-            return BLACK;
-        }
-        else if(result == 2) // right letter, wrong position
-        {
-            return YELLOW;
-        }
-        else if(result == 3) // right letter, right position
-        {
-            return GREEN;
-        }
-        else // default color
-        {
-            return BLACK;
-        }
+        System.out.println("--------Rules--------\n");
+        System.out.println("The letter W is in \"WORLD\" and in the correct spot: " + GREEN +"W" + RESET + "ORLD");
+        System.out.println("The letter OW is in \"WORLD\" but in the wrong spot: " + YELLOW + "OW" + RESET + "RLD");
+        System.out.println("The letter U is not in \"WORLD\" in any spot: WORL" + RED + "U" + RESET);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    private void scores()
+    {
+        System.out.println("Number of question guessed: " + scores);
+    }
 
 
 
@@ -181,10 +194,7 @@ public class wordle
         }
     }
 
-
-
-    private void clear() // clearing the console for a better Users experiences.
-    {
+    public static void clear() {
         System.out.print("\033[H\033[2J");
         System.out.flush();
     }
