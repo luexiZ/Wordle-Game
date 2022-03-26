@@ -14,6 +14,10 @@ public class wordle
     private String correctWord;
     private String choice;
     private int scores;
+    private Player player1;
+    private Player player2;
+    private Player currentPlayer;
+
 
     public wordle()
     {
@@ -25,12 +29,45 @@ public class wordle
         guessingWord = "";
         correctWord = "";
         guessingWordArray = new String[5];
+        player1 = null;
+        player2 = null;
+        currentPlayer = null;
         start();
     }
 
     public void start()
     {
         System.out.println("Welcome to WORDLE, enjoy yourself in the world of words.");
+        boolean asking = true;
+        int playerNumber = 0;
+        while(asking)
+        {
+            System.out.print("One Player(1) or two Player(2)? ");
+            playerNumber = scanner.nextInt();
+            scanner.nextLine();
+            if(playerNumber == 1 || playerNumber == 2)
+            {
+                asking = false;
+            }
+        }
+        if(playerNumber == 1)
+        {
+            System.out.print("What is your name? ");
+            String name = scanner.nextLine();
+            player1 = new Player(name);
+            System.out.println("You're all set!");
+        }
+        else
+        {
+            System.out.print("What is player1's name? ");
+            String name = scanner.nextLine();
+            player1 = new Player(name);
+            System.out.print("What is player2's name? ");
+            String name2 = scanner.nextLine();
+            player2 = new Player(name2);
+            System.out.println("You guys are all set!");
+            currentPlayer = player1;
+        }
         mainMenu();
     }
 
@@ -43,6 +80,7 @@ public class wordle
             System.out.println("(P)lay");
             System.out.println("(R)ules for the game");
             System.out.println("(S)cores");
+            System.out.println("(C)hange Player");
             System.out.println("(Q)uit");
             System.out.print("Select an option: ");
             choice = scanner.nextLine();
@@ -65,6 +103,10 @@ public class wordle
         {
             scores();
         }
+        else if(choice.equals("c"))
+        {
+            changePlayer();
+        }
         else if(choice.equals("q"))  // quit
         {
             System.out.println("You have a great day! GoodBye!");
@@ -73,7 +115,7 @@ public class wordle
         {
             System.out.println("Yikes! That's an invalid option! Try again.");
         }
-        System.out.println("\n");
+        System.out.println("");
         waitNow();
     }
 
@@ -96,6 +138,7 @@ public class wordle
                 grid.printGrid();
                 System.out.print("Enter your guess : ");
                 guessingWord = scanner.nextLine();
+                guessingWord = guessingWord.toLowerCase();
                 if(guessingWord.length() == 5 && guessingWord.matches("[a-zA-Z]+"))
                 {
                     badLetter = false;
@@ -118,10 +161,11 @@ public class wordle
             {
                 System.out.println("You got it right!");
                 isGuessing = false;
+                currentPlayer.win();
             }
             else
             {
-                if(trial == 4)
+                if(trial == 5)
                 {
                     System.out.println("Correct Answer: " + correctWord );
                 }
@@ -149,8 +193,11 @@ public class wordle
     public int check(String[] original)
     {
         int result = 0;
+
         for(int i = 0; i < guessingWordArray.length; i++)
         {
+            int totalNumOfLetter = 0;
+            int letterExisted = 0;
             if (correctWord.contains(guessingWordArray[i]) && original[i].equals(guessingWordArray[i]))  // right letter, right position
             {
                 guessingWordArray[i] = GREEN + guessingWordArray[i] + RESET;
@@ -158,7 +205,30 @@ public class wordle
             }
             else if (correctWord.contains(guessingWordArray[i]) && !original[i].equals(guessingWordArray[i])) // right letter, wrong position
             {
-                guessingWordArray[i] = YELLOW + guessingWordArray[i] + RESET;
+                for (String s : original)
+                {
+                    if (s.equals(guessingWordArray[i]))
+                    {
+                        totalNumOfLetter++;
+
+                    }
+                }
+                for(int k = 0; k <= i; k++)
+                {
+                    if(guessingWordArray[k].equals(guessingWordArray[i]))
+                    {
+                        letterExisted++;
+                    }
+                }
+                if(letterExisted >  totalNumOfLetter)
+                {
+                    guessingWordArray[i] = RED + guessingWordArray[i] + RESET;
+                    guessingWordArray[i] = YELLOW + guessingWordArray[i] + RESET;
+                }
+                else
+                {
+                    guessingWordArray[i] = YELLOW + guessingWordArray[i] + RESET;
+                }
             }
             else   // wrong letter, wrong position
             {
@@ -177,7 +247,30 @@ public class wordle
 
     private void scores()
     {
-        System.out.println("Number of question guessed: " + scores);
+        System.out.println();
+        System.out.println("Player: " + currentPlayer.getName() );
+        System.out.print("Number of question guessed: " + currentPlayer.getScores());
+    }
+
+    public void changePlayer()
+    {
+        if(player2 == null)
+        {
+            System.out.println("Invalid Option! You only selected one person mode.");
+        }
+        else
+        {
+            if(currentPlayer == player1)
+            {
+                currentPlayer = player2;
+                System.out.println("Player2 is now in control.");
+            }
+            else
+            {
+                currentPlayer = player1;
+                System.out.println("Player1 is now in control.");
+            }
+        }
     }
 
 

@@ -46,7 +46,7 @@ public class Board
             }
             commas = 0;
             System.out.println("]");
-            System.out.println();
+
         }
     }
 }
