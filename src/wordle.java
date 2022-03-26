@@ -6,14 +6,13 @@ public class wordle
     private static final String RED = "\u001B[31m";
     private static final String YELLOW = "\u001B[33m";
     public static final String RESET = "\u001B[0m";
-    private WordCollections dictionary;
+    private final WordCollections dictionary;
     private Board grid;
     private Scanner scanner;
     private String[] guessingWordArray;
     private String guessingWord;
     private String correctWord;
     private String choice;
-    private int scores;
     private Player player1;
     private Player player2;
     private Player currentPlayer;
@@ -25,7 +24,6 @@ public class wordle
         dictionary = new WordCollections("src\\word.txt");
         grid = new Board();
         choice = "";
-        scores = 0;
         guessingWord = "";
         correctWord = "";
         guessingWordArray = new String[5];
@@ -66,8 +64,8 @@ public class wordle
             String name2 = scanner.nextLine();
             player2 = new Player(name2);
             System.out.println("You guys are all set!");
-            currentPlayer = player1;
         }
+        currentPlayer = player1;
         mainMenu();
     }
 
@@ -132,14 +130,16 @@ public class wordle
 
         while(trial < 5 && isGuessing)
         {
+            grid.printGrid();
             boolean badLetter = true;
             while(badLetter)  // loop them if they insert symbols or not exact 5-letter word.
             {
-                grid.printGrid();
+
                 System.out.print("Enter your guess : ");
                 guessingWord = scanner.nextLine();
                 guessingWord = guessingWord.toLowerCase();
-                if(guessingWord.length() == 5 && guessingWord.matches("[a-zA-Z]+"))
+                boolean isaWord = dictionary.getDictionary().contains(guessingWord);
+                if(guessingWord.length() == 5 && guessingWord.matches("[a-zA-Z]+") && isaWord)
                 {
                     badLetter = false;
                 }
@@ -149,7 +149,7 @@ public class wordle
                 }
                 else
                 {
-                    System.out.println("No Numbers or Symbol");
+                    System.out.println("Not a word");
                 }
             }
             fillIntoArray(guessingWord);
@@ -159,7 +159,7 @@ public class wordle
             grid.printGrid();
             if(result == 5)
             {
-                System.out.println("You got it right!");
+                System.out.println("Congrats! " + currentPlayer.getName() + ", you got it right!");
                 isGuessing = false;
                 currentPlayer.win();
             }
@@ -171,9 +171,10 @@ public class wordle
                 }
                 else
                 {
-                    System.out.println("Nice Try");
+                    System.out.println("Nice Try, " + currentPlayer.getName());
                 }
             }
+            System.out.println();
         }
         // set the grid and correctAnswer back to default
         grid.clearGrid();
@@ -193,7 +194,11 @@ public class wordle
     public int check(String[] original)
     {
         int result = 0;
-
+        String[] copied = new String[5];
+        for(int i = 0;  i < guessingWordArray.length; i++)
+        {
+            copied[i] =guessingWordArray[i];
+        }
         for(int i = 0; i < guessingWordArray.length; i++)
         {
             int totalNumOfLetter = 0;
@@ -207,23 +212,23 @@ public class wordle
             {
                 for (String s : original)
                 {
-                    if (s.equals(guessingWordArray[i]))
+                    if (s.equals(copied[i]))
                     {
                         totalNumOfLetter++;
 
                     }
                 }
-                for(int k = 0; k <= i; k++)
+                for(int j = 0; j <= i; j++)
                 {
-                    if(guessingWordArray[k].equals(guessingWordArray[i]))
+                    if(copied[j].equals(copied[i]))
                     {
                         letterExisted++;
                     }
                 }
-                if(letterExisted >  totalNumOfLetter)
+
+                if(letterExisted > totalNumOfLetter)
                 {
                     guessingWordArray[i] = RED + guessingWordArray[i] + RESET;
-                    guessingWordArray[i] = YELLOW + guessingWordArray[i] + RESET;
                 }
                 else
                 {

@@ -27,12 +27,16 @@ public class WordCollections
         String[] guess = new String[5];
         int randomIndex = (int)(Math.random() * dictionary.size());  // hard code this number to check
 //        String str = dictionary.get(randomIndex);
-        String str = "hello";
+        String str = "grovy";
         for(int i = 0; i < guess.length; i++)
         {
             guess[i] = str.substring(i, i+1);
         }
         return guess;  // write a method to put out a random five letter word inside dictionary ArrayList.
+    }
+
+    public ArrayList<String> getDictionary() {
+        return dictionary;
     }
 
     private void importDictionary(String fileName)
