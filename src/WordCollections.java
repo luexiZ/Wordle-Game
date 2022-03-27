@@ -12,7 +12,9 @@ public class WordCollections
     private Scanner scanner;
     private String fileNames;
 
-    // constructor; uses try-catch syntax which we haven't discussed!
+    /**
+     * @param fileName name of the txt file
+     */
     public WordCollections(String fileName)
     {
         this.fileNames = fileName;
@@ -26,13 +28,12 @@ public class WordCollections
     {
         String[] guess = new String[5];
         int randomIndex = (int)(Math.random() * dictionary.size());  // hard code this number to check
-//        String str = dictionary.get(randomIndex);
-        String str = "grovy";
+        String str = dictionary.get(randomIndex);
         for(int i = 0; i < guess.length; i++)
         {
             guess[i] = str.substring(i, i+1);
         }
-        return guess;  // write a method to put out a random five letter word inside dictionary ArrayList.
+        return guess;  // write a method to put out a random five-letter word inside dictionary ArrayList.
     }
 
     public ArrayList<String> getDictionary() {
@@ -51,12 +52,9 @@ public class WordCollections
 
             while ((line = bufferedReader.readLine()) != null)
             {
-//                lines.add(line);
                 dictionary.add(line);
             }
 
-//            bufferedReader.close();
-//            tmp = lines.toArray(new String[lines.size()]);
             System.out.println("\nFile imported successfully!");
         }
         catch (IOException e)
@@ -64,7 +62,7 @@ public class WordCollections
             System.out.println("Error importing file; unable to access "+ e.getMessage());
         }
 
-//        dictionary = new ArrayList<String>(Arrays.asList(tmp));
+
     }
 
 }

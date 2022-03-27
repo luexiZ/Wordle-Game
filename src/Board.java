@@ -8,7 +8,10 @@ public class Board
         clearGrid();
     }
 
-
+    /**
+     * @param array user's modified array with colors
+     * @param row the number of tries the player had
+     */
     public void setGrid(String[] array, int row)
     {
             for(int i = 0; i < grid[row].length; i++)
@@ -16,7 +19,7 @@ public class Board
                 grid[row][i] = array[i];
             }
     }
-
+    // set every element of the grid back into an empty string value
     public void clearGrid()
     {
         for(int i = 0; i < grid.length; i++)
@@ -28,7 +31,12 @@ public class Board
         }
     }
 
-
+    /* prints the grid in the following format :   [ , , , , ]
+                                                   [ , , , , ]
+                                                   [ , , , , ]
+                                                   [ , , , , ]
+                                                   [ , , , , ]
+     */
     public void printGrid()
     {
         int commas = 0;
