@@ -35,7 +35,7 @@ public class wordle
     public wordle()
     {
         scanner = new Scanner(System.in);
-        dictionary = new WordCollections("src\\EasyVerison.txt");
+        dictionary = new WordCollections("src\\word.txt");
         grid = new Board();
         choice = "";
         guessingWord = "";
